@@ -13,9 +13,14 @@ RUN rm /etc/nginx/sites-enabled/default
 ADD passenger.conf /etc/nginx/sites-enabled/app.conf
 ADD nginx_docker_env.conf /etc/nginx/main.d/docker_env.conf
 
+WORKDIR /tmp
+ADD Gemfile Gemfile
+ADD Gemfile.lock Gemfile.lock
+RUN bundle install
+
 COPY . /app
-RUN mkdir -p /app/tmp /app/public
 
 WORKDIR /app
+RUN mkdir -p /app/tmp /app/public
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
