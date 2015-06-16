@@ -1,8 +1,9 @@
 FROM phusion/passenger-ruby22:latest
 
 RUN apt-get install -y git-core
+
 ENV HOME /root
-ENV RAILS_ENV production
+ENV RACK_ENV production
 
 CMD ["/sbin/my_init"]
 
