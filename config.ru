@@ -2,9 +2,10 @@ $:.unshift("/rails/app/models")
 
 use Rack::ShowExceptions
 
+require 'bundler/setup'
+require 'active_record'
 require 'grack'
 require 'git_adapter'
-require 'active_record'
 require 'user'
 
 use Rack::Auth::Basic, "Restricted git repository" do |username, password|
