@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'pg'
-gem 'grack'
+gem 'grack', github: 'gitlabhq/grack'
 gem 'activerecord', require: 'active_record'
 gem 'devise'
