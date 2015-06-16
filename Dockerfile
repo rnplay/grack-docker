@@ -16,11 +16,11 @@ ADD nginx_docker_env.conf /etc/nginx/main.d/docker_env.conf
 WORKDIR /tmp
 ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
-RUN bundle install
+RUN bundle install 
 
-COPY . /app
+COPY . /home/app
 
-WORKDIR /app
-RUN mkdir -p /app/tmp /app/public
+WORKDIR /home/app
+RUN mkdir -p /home/app/tmp /home/app/public
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
