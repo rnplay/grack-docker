@@ -17,6 +17,7 @@ class GitlabId
    end 
 
  def call(env)
+   puts env.inspect
    env['GL_ID'] = ENV['REQUEST_URI'].split("/")[1]
    @app.call(env) 
  end 
