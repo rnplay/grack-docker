@@ -3,21 +3,30 @@ $:.unshift("/rails/app/models")
 use Rack::ShowExceptions
 
 require 'bundler/setup'
-require 'active_record'
 require 'grack'
-require 'git_adapter'
-require 'user'
 
-use Rack::Auth::Basic, "Restricted git repository" do |username, password|
-  username == User.find_by(email: username) || User.find_by(username: username)
+#conn = PG.connect( dbname: 'rnplay_production' )
+#use Rack::Auth::Basic, "Restricted git repository" do |username, password|
+#  
+#end
+
+class GitlabId
+
+  def initialize(app)
+    @app = app 
+   end 
+
+ def call(env)
+   env['GL_ID'] = ENV['REQUEST_URI'].split("/")[1]
+   @app.call(env) 
+ end 
+
 end
 
-config = {
-  :project_root => "/var/repos",
-  :adapter => Grack::GitAdapter,
-  :git_path => '/usr/bin/git',
-  :upload_pack => true,
-  :receive_pack => true
-}
+use GitlabId
 
-run Grack::App.new(config)
+run Grack::Server.new({
+	project_root: '/var/repos',
+	upload_pack: true,
+	receive_pack:true
+})
