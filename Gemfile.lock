@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/rnplay/grack.git
-  revision: daa9625eea328f3950576608c68b730017e206a1
+  revision: 6b46fef1967de297db724fbd0b2966f75fe2742c
   specs:
     gitlab-grack (2.0.2)
       rack (~> 1.5.1)
