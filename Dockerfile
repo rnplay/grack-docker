@@ -18,6 +18,8 @@ ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
 RUN bundle install 
 
+USER app
+
 COPY . /home/app
 
 WORKDIR /home/app
