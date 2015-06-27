@@ -5,26 +5,41 @@ use Rack::ShowExceptions
 require 'bundler/setup'
 require 'grack'
 
-#conn = PG.connect( dbname: 'rnplay_production' )
-#use Rack::Auth::Basic, "Restricted git repository" do |username, password|
-#  
-#end
+class GitAuthBasic < Rack::Auth::Basic
 
-class GitlabId
+  def call(env)
+    auth = Basic::Request.new(env)
 
-  def initialize(app)
-    @app = app 
-   end 
+    return unauthorized unless auth.provided?
 
- def call(env)
-   puts env.inspect
-   env['GL_ID'] = ENV['REQUEST_URI'].split("/")[1]
-   @app.call(env) 
- end 
+    return bad_request unless auth.basic?
+
+    repository_name = request.path.split("/").last.split(".").first
+
+    if valid?(auth, repository_name)
+      env['REMOTE_USER'] = auth.username
+      return @app.call(env)
+    end
+
+    unauthorized
+  end
+
+   def valid?(auth, repository_name)
+     @authenticator.call(repository_name, *auth.credentials)
+   end
 
 end
 
-use GitlabId
+use GitAuthBasic, "Restricted rnplay.org git repository" do |repository_name, username, password|
+
+  conn = PG.connect( dbname: 'rnplay_production', host: ENV['POSTGRES_PORT_5432_TCP_ADDR'], port: ENV['POSTGRES_PORT_5432_TCP_PORT'], user: "postgres", password: ENV['POSTGRES_PASSWORD'])
+
+  conn.exec( "SELECT id from users inner join on apps.user_id = users.id where users.authentication_token = $1 and apps.url_token = $2", [username, repository_name]) do |result|
+    result.each do |row|
+    end
+  end
+
+end
 
 run Grack::Server.new({
 	project_root: '/var/repos',
