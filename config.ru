@@ -29,7 +29,7 @@ class GitAuthBasic < Rack::Auth::Basic
    end
 
 end
-puts ENV.inspect
+
 use GitAuthBasic, "Restricted rnplay.org git repository" do |repository_name, username, password|
 
   conn = PG.connect( dbname: 'rnplay_production', host: ENV['POSTGRES_1_PORT_5432_TCP_ADDR'], port: ENV['POSTGRES_1_PORT_5432_TCP_PORT'], user: "postgres", password: ENV['POSTGRES_ENV_POSTGRES_PASSWORD'])
@@ -45,7 +45,7 @@ use GitAuthBasic, "Restricted rnplay.org git repository" do |repository_name, us
 end
 
 run Grack::Server.new({
-	project_root: '/var/repos',
+	project_root: ENV['REPO_PATH'] || '/var/repos',
 	upload_pack: true,
 	receive_pack:true
 })
